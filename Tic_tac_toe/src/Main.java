@@ -17,14 +17,14 @@ public class Main {
           if (gameBoard.WinCheck(joueurActuel)) {
               gameBoard.displayGrille();
               System.out.println("🎉 Le joueur " + joueurActuel + " a gagné !");
-              break;
+              finduJeu = true;
           } else if (gameBoard.MatchNull()) {
               gameBoard.displayGrille();
               System.out.println("🤝 Match nul !");
-              break;
+              finduJeu = true;
+          }else {
+              joueurActuel = (joueurActuel == 'X') ? 'O' : 'X';
           }
-            joueurActuel = (joueurActuel == 'X') ? 'O' : 'X';
-
         }
 
       read.close();
