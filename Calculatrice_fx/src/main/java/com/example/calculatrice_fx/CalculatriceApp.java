@@ -1,6 +1,8 @@
 package com.example.calculatrice_fx;
 
 import javafx.application.Application;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -8,8 +10,31 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 
 public class CalculatriceApp extends Application {
+
+    public int operation(int a, int b, String operator){
+
+        switch (operator){
+            case "+":
+                return a + b;
+            case "-":
+                return a - b;
+            case "*":
+                return a * b;
+            case "/":
+                return a / b;
+            default:
+                return 0;
+        }
+    }
+
+    private int firstNumber = 0;
+    private String operator = "";
+
     @Override
     public void start(Stage primaryStage) {
 
@@ -24,13 +49,46 @@ public class CalculatriceApp extends Application {
         buttonGrid.setHgap(5);
         buttonGrid.setVgap(5);
 
-        Button button1 = new Button("1");
-        Button button2 = new Button("2");
-        Button buttonPlus = new Button("+");
 
-        buttonGrid.add(button1, 0, 0); // (col=0, row=0)
-        buttonGrid.add(button2, 1, 0); // (col=1, row=0)
-        buttonGrid.add(buttonPlus, 2, 0); // (col=2, row=0)
+        String[][] buttonLabels = {
+                {"7", "8", "9", "/"},
+                {"4", "5", "6", "*"},
+                {"1", "2", "3", "-"},
+                {"C", "0", "=", "+"}
+        };
+        String[] operators = {"+", "-", "*", "/"};
+
+
+        for (int i =0; i < buttonLabels.length; i++ ){
+            for (int j=0; j < buttonLabels[i].length; j++){
+                Button newButton = new Button(buttonLabels[i][j]);
+                newButton.setPrefSize(50,50);
+                newButton.setOnAction(event -> {
+                    String btText =  ((Button) event.getSource()).getText();
+                    if (btText.equals("=")) {
+                        int secondNumber = Integer.parseInt(display.getText());
+                        if(operator.equals("/") && secondNumber == 0){
+                            display.setText("Error operation");
+                        }
+                        else {
+                            int result = operation(firstNumber, secondNumber, operator);
+                            display.setText(String.valueOf(result));
+                        }
+                    }
+                    else if (Arrays.asList(operators).contains(btText)) {
+                        firstNumber = Integer.parseInt(display.getText());
+                        operator = btText;
+                        display.clear();
+                    } else if (btText.equals("C")){
+                        firstNumber = 0;
+                        display.clear();
+                    } else {
+                        display.setText(display.getText() + btText);
+                    }
+                });
+                buttonGrid.add(newButton, j , i);
+            }
+        }
 
         root.getChildren().addAll(display, buttonGrid);
 
